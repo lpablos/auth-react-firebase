@@ -4,6 +4,7 @@ const Login = () => {
     const [correo, setCorreo] = useState('')
     const [password, setPassword ] = useState('')
     const [error, setError] = useState(null)
+    const [esRegistro, setEsRegistro] = useState(true)
 
     const procesarDatos = e => {
         e.preventDefault()
@@ -27,7 +28,13 @@ const Login = () => {
         <div class="mt-2">
             
             <div class="mb-3">
-                <h3 class="text-center">Acceso o Regstio de Usuarios</h3>
+                <h3 class="text-center">
+                    {
+                        esRegistro 
+                        ? 'Registro de usuario'
+                        : 'Inicio se sessión'
+                    }
+                </h3>
                 <div class="row justify-content-center ">
                     <div class="col-12 col-sm-8 col-md-6 col-xl-4">
                         <form onSubmit={procesarDatos}>
@@ -41,8 +48,23 @@ const Login = () => {
                              <input type="email" class="form-control mb-2" value={ correo }  onChange={ e => setCorreo(e.target.value) } placeholder="Ingrese un Email"/>
                              <input type="password" class="form-control mb-2" value={ password } onChange={ e=> setPassword(e.target.value)} placeholder="Contraseña"/>
                              <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-dark btn-lg"> Registrarse</button>
-                                <button class="btn btn-info btn-lg btn-sm"> ¿ Tienes cuenta ?</button>
+                                <button type="submit" class="btn btn-dark btn-lg">
+                                    {
+                                        esRegistro
+                                        ? 'Registrar'
+                                        : 'Acceder'
+                                    }
+                                </button>
+                                <button 
+                                    type="button"
+                                    class="btn btn-info btn-lg btn-sm"
+                                    onClick={ ()=>setEsRegistro(!esRegistro)}>
+                                        {
+                                            esRegistro
+                                            ? '¿ Ya tienes cuenta ?'
+                                            : '¿ No tienes cuenta ?'
+                                        }
+                                </button>
                              </div>
                         </form>
                     </div>
