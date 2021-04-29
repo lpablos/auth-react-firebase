@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
+import { auth } from '../firebase'
 
 const Login = () => {
     const [correo, setCorreo] = useState('')
@@ -21,9 +22,30 @@ const Login = () => {
             return
         }
         setError(null)
-        console.log('pasando las validaciones');
+        if(esRegistro){
+            Registrar()
+        }
 
     }
+
+    const Registrar = useCallback (
+        async () => {
+            await auth.createUserWithEmailAndPassword(correo, password)
+            .then((userCredential) => {
+                console.log(userCredential)
+                setError(null)
+            })
+            .catch((error) => {
+                console.log(error);
+                if(error.code === 'auth/invalid-email'){
+                    setError('Correo invalido')
+                }
+                if(error.code === 'auth/email-already-in-use'){
+                    setError('El correo ya ha fue utilizado')
+                }
+            });
+        },[correo, password])
+
     return (
         <div class="mt-2">
             
