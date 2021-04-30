@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { auth } from '../firebase'
+import { auth, db } from '../firebase'
 
 const Login = () => {
     const [correo, setCorreo] = useState('')
@@ -32,8 +32,20 @@ const Login = () => {
         async () => {
             await auth.createUserWithEmailAndPassword(correo, password)
             .then((userCredential) => {
-                console.log(userCredential)
-                setError(null)
+                
+                db.collection("usuarios").doc(userCredential.user.email).set({
+                    email: userCredential.user.email,
+                    uid: userCredential.user.uid
+                })
+                .then(() => {
+                    console.log("Document successfully written!");
+                    setCorreo('')
+                    setPassword('')
+                    setError(null)
+                })
+                .catch((error) => {
+                    console.error("Error writing document: ", error);
+                });
             })
             .catch((error) => {
                 console.log(error);
