@@ -5,7 +5,7 @@ const Login = () => {
     const [correo, setCorreo] = useState('')
     const [password, setPassword ] = useState('')
     const [error, setError] = useState(null)
-    const [esRegistro, setEsRegistro] = useState(true)
+    const [esRegistro, setEsRegistro] = useState(false)
 
     const procesarDatos = e => {
         e.preventDefault()
@@ -24,6 +24,8 @@ const Login = () => {
         setError(null)
         if(esRegistro){
             Registrar()
+        }else{
+            Accesar()
         }
 
     }
@@ -56,6 +58,27 @@ const Login = () => {
                     setError('El correo ya ha fue utilizado')
                 }
             });
+        },[correo, password])
+    const Accesar = useCallback(async () => {
+        await auth.signInWithEmailAndPassword(correo, password)
+        .then((userCredential) => {
+          console.log("Entro", userCredential);
+        })
+        .catch((error) => {
+            console.log(error);
+            if(error.code === 'auth/invalid-email'){
+                setError('Correo invalido')
+            }
+            if(error.code === 'auth/email-already-in-use'){
+                setError('El correo ya ha fue utilizado')
+            }
+            if(error.code === 'auth/user-not-found'){
+                setError('No existe la cuenta registrada')
+            }
+            if(error.code === 'auth/wrong-password'){
+                setError('Constraseña invalida')
+            }
+        });
         },[correo, password])
 
     return (
