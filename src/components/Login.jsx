@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react'
 import { auth, db } from '../firebase'
+import { withRouter } from 'react-router-dom'
 
-const Login = () => {
+const Login = (props) => {
     const [correo, setCorreo] = useState('')
     const [password, setPassword ] = useState('')
     const [error, setError] = useState(null)
@@ -39,11 +40,11 @@ const Login = () => {
                     email: userCredential.user.email,
                     uid: userCredential.user.uid
                 })
-                .then(() => {
-                    console.log("Document successfully written!");
+                .then(() => {                    
                     setCorreo('')
                     setPassword('')
                     setError(null)
+                    props.history.push('/admin')
                 })
                 .catch((error) => {
                     console.error("Error writing document: ", error);
@@ -58,11 +59,16 @@ const Login = () => {
                     setError('El correo ya ha fue utilizado')
                 }
             });
-        },[correo, password])
+        },[correo, password, props.history])
+
     const Accesar = useCallback(async () => {
         await auth.signInWithEmailAndPassword(correo, password)
         .then((userCredential) => {
           console.log("Entro", userCredential);
+          setCorreo('')
+          setPassword('')
+          setError(null)
+          props.history.push('/admin')
         })
         .catch((error) => {
             console.log(error);
@@ -79,7 +85,7 @@ const Login = () => {
                 setError('Constraseña invalida')
             }
         });
-        },[correo, password])
+        },[correo, password, props.history])
 
     return (
         <div class="mt-2">
@@ -132,4 +138,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default withRouter(Login)
