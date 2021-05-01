@@ -11,24 +11,25 @@ import {
 
 function App() {
 
-  const [firebaseUser, setFirebaseUser] = useState(false)
+  const [firebaseUser, setFirebaseUser] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    setLoading(false)
     auth.onAuthStateChanged((user) => {
-      (user)
-        // User is signed in.
+      user
         ?setFirebaseUser(user)
-        // No user is signed in.
         :setFirebaseUser(null)      
+      setLoading(true)
     })   
   }, [])
 
-  return (firebaseUser) 
+  return (loading) 
   // we have data of user since firebase
   ?(
     <Router>
       <div class="container">
-        <Navegacion/>
+        <Navegacion firebaseUser={firebaseUser}/>
         <Switch>
           <Route path="/" exact>
             <h3>Inicio</h3>
