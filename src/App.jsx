@@ -1,5 +1,7 @@
 import Navegacion from './components/Navegacion'
 import Login from './components/Login'
+import Admin from './components/Admin'
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -19,7 +21,7 @@ function App() {
             <Login />
           </Route>
           <Route path="/admin">
-            <h3>administrador</h3>
+            <Admin/>
           </Route>
         </Switch>
       </div>
