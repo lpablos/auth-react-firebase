@@ -19,7 +19,9 @@ const Admin = (props) => {
     return (
         <div>
             <pre>
-                Hola
+                {
+                    user && (<h3> {user.email}</h3>)
+                }
             </pre>
         </div>
     )
