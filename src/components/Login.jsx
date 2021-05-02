@@ -49,6 +49,10 @@ const Login = (props) => {
                 .catch((error) => {
                     console.error("Error writing document: ", error);
                 });
+                db.collection(userCredential.user.uid).add({
+                    name: "Tokyo",
+                    fecha: Date.now()
+                })
             })
             .catch((error) => {
                 console.log(error);
