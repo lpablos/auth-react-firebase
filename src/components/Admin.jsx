@@ -8,10 +8,8 @@ const Admin = (props) => {
     const [user, setUser] = useState(null)
     
     useEffect(() => {
-        if(auth.currentUser){
-        
+        if(auth.currentUser){        
             setUser(auth.currentUser)
-            console.log(user);
         }else{
             props.history.push('/login')
         }

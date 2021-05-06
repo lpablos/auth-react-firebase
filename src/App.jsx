@@ -1,6 +1,7 @@
 import Navegacion from './components/Navegacion'
 import Login from './components/Login'
 import Admin from './components/Admin'
+import Reset from './components/Reset'
 import { useEffect, useState } from 'react'
 import { auth } from './firebase'
 import {
@@ -39,6 +40,9 @@ function App() {
           </Route>
           <Route path="/admin">
             <Admin/>
+          </Route>
+          <Route path="/reset">
+            <Reset/>
           </Route>
         </Switch>
       </div>
