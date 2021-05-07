@@ -1,14 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { db } from '../firebase'
 import moment from 'moment'
 // import 'moment/local/es'
 
 const Firestore = (props) => {
 
-    const [tareas, setTareas] = React.useState([])
-    const [tarea, setTarea] = React.useState('')
-    const [modoEdicion, setModoEdicion] = React.useState(false)
-    const [id, setId] = React.useState('')
+    const [tareas, setTareas] = useState([])
+    const [tarea, setTarea] = useState('')
+    const [modoEdicion, setModoEdicion] = useState(false)
+    const [id, setId] = useState('')
+    const [ultimo, setUltimo] = useState(null)
+    const [desactivar, setDesactivar] = useState(false)
   
   
     React.useEffect(() => {
@@ -19,10 +21,27 @@ const Firestore = (props) => {
   
     const obtenerDatos = async () => {  
       try {
-        const data = await db.collection(props.user.uid).get()
+        setDesactivar(true)
+        const data = await db
+                            .collection(props.user.uid)
+                            .limit(2)
+                            .orderBy('fecha','desc')
+                            .get()
         const arrayData = data.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-        console.log(arrayData)
-        setTareas(arrayData)        
+        // I get total of documents it was return
+        setUltimo(data.docs[data.docs.length-1])
+        setTareas(arrayData) 
+        // This read the next items by disabled button or not      
+        const query = await db
+                            .collection(props.user.uid)
+                            .limit(2)
+                            .orderBy('fecha')
+                            .startAfter(data.docs[data.docs.length - 1])
+                            .get()
+        
+        query.empty
+          ? setDesactivar(true)
+          : setDesactivar(false)        
       } catch (error) {
         console.log(error)
       }
@@ -103,6 +122,31 @@ const Firestore = (props) => {
       }
     }
 
+    const siguiente = async () => {
+      try {
+        const data = await db
+                            .collection(props.user.uid)
+                            .limit(2)
+                            .orderBy('fecha')
+                            .startAfter(ultimo)
+                            .get()
+        const arrayNewData = data.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+        setTareas([...tareas, ...arrayNewData])    
+        setUltimo(data.docs[data.docs.length-1])
+        const query = await db
+                            .collection(props.user.uid)
+                            .limit(2)
+                            .orderBy('fecha')
+                            .startAfter(data.docs[data.docs.length-1])
+                            .get()
+        query.empty
+          ? setDesactivar(true)
+          : setDesactivar(false)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
     return (
         <div>
             <div className="row">
@@ -129,6 +173,16 @@ const Firestore = (props) => {
                         ))
                         }
                     </ul>
+                    <div class="d-grid gap-2 mt-3">
+                      <button 
+                        class="btn btn-primary btn-sm" 
+                        type="button"
+                        onClick={()=>siguiente()}
+                        disabled={desactivar}
+                      >
+                        Siguiente
+                      </button>
+                    </div>
                 </div>
                 <div className="col-md-6">
                     <h3>
